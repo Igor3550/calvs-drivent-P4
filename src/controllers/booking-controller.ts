@@ -29,3 +29,19 @@ export async function createBooking(req: AuthenticatedRequest, res: Response) {
     if(error.name === "ConflictError") return res.sendStatus(httpStatus.FORBIDDEN);
   }
 }
+
+export async function updateBooking(req: AuthenticatedRequest, res: Response) {
+  const userId = Number(req.userId);
+  const roomId = Number(req.body.roomId);
+  const bookingId = Number(req.params.bookingId);
+
+  if(!roomId) return res.sendStatus(httpStatus.NOT_FOUND);
+
+  try {
+    const booking = await bookingService.updateRoomIdBooking(userId, bookingId, roomId);
+    return res.status(httpStatus.OK).send(booking);
+  } catch (error) {
+    if(error.name === "NotFoundError") return res.sendStatus(httpStatus.NOT_FOUND);
+    if(error.name === "ConflictError") return res.sendStatus(httpStatus.FORBIDDEN);
+  }
+}
